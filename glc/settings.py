@@ -33,7 +33,6 @@ INSTALLED_APPS = [
     #I Included:
     'djangoflutterwave',
     'crispy_forms',
-    'django_waitress',
     'allauth',
     'allauth.account',
     'allauth.socialaccount', 
