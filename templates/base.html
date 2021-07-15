@@ -28,11 +28,11 @@
 		
 		<div id="site-content">
 			
-			<header class="site-header">
+			<header class="site-header" style="background-image: url('{% static 'assets/background.jpg' %}'); background-size:cover;">
 				<div class="container">
 					<a href="{% url 'base:home' %}" id="branding">
 						<img src="{% static 'images/logo.png' %}" alt="Company Name" class="logo">
-						<div class="branding-copy">
+						<div>
 							<h1 class="site-title">Company Name</h1>
 							<small class="site-description">Tagline goes here</small>
 						</div>
@@ -47,9 +47,33 @@
 					</nav>
 					<nav class="mobile-navigation"></nav>
 				</div>
+				
+				<div class="hero" >
+					<div class="container">
+						<div class="row">
+			
+						{% comment %}
+							<div class="col-md-8">
+								<figure><img src="{% static 'assets/background.jpg' %}" alt=""></figure>
+							</div>	
+						{% endcomment %}
+						
+							<div class="col-md-5">
+								<div class="hero-content">
+									<div class="hero-title"><p style="font-size: 100px;">Best for businesses.</p></div>
+									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi accusamus aut rerum sed maxime, magnam neque sapiente quidem</p>
+									<a href="#" class="button" style="border-color: #111132; background-color: #111132;">BOOK A SESSION</a>
+									<a href="{% url 'base:ebook_view' %}" class="button" style="margin-left: 10px;">BUY OUR E-BOOK</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div> <!-- .hero-slider -->
+
 			</header> <!-- .site-header -->
 
-			
+				
+
                 {% block content %}
                 {% endblock %}
 
@@ -62,9 +86,10 @@
                                     <span>Join our news letter</span>
                                 </label>
                                 <div class="control">
-                                    <input type="text" placeholder="Enter your email to subscribe...">
-                                    <button type="submit"><img src="{% static 'images/icon-envelope.png' %}" alt=""></button>
-                                                            </form>
+                                    <input style="border-color: white;" type="text" placeholder="Enter your email to subscribe...">
+									
+                                    <button type="submit" style="border-color: white; font-size: 50px; border-left: none;"><i class="fa fa-long-arrow-right" style="color: white; font-weight: lighter;"></i></button>
+                            </form>
                                 </div>
                         </div>
                         <div class="social-links">
@@ -74,7 +99,7 @@
                             <a href="#"><i class="fa fa-pinterest"></i></a>
                         </div>
                         <div class="copy">
-                            <p>Copyright 2014 Company name. Designed by Themeezy. All rights reserved.</p>
+                            <p>Copyright</p>
                         </div>
                     </div>
                 </footer> <!-- .site-footer -->

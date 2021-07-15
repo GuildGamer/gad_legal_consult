@@ -4,37 +4,13 @@
 				{% block selected %}
 				<li class="menu-item current-menu-item"><a href="{% url 'base:home' %}">Home</a></li>
 				<li class="menu-item"><a href="{% url 'base:about' %}">About Us</a></li>
-				<li class="menu-item"><a href="{% url 'base:experience' %}">Experience</a></li>
-				<li class="menu-item"><a href="{% url 'base:service' %}">Service</a></li>
-				<li class="menu-item"><a href="{% url 'base:contact' %}">Contact</a></li>
+				<li class="menu-item"><a href="{% url 'base:blog' %}">Blog</a></li>
+				<li class="menu-item"><a href="{% url 'base:services' %}">Services</a></li>
 				{% endblock %}
 
 				{% block content %}
 
-				<main class="main-content">
-					<div class="hero" style="background-image: url('{% static 'assets/background.jpg' %}'); background-size:cover;">
-						<div class="container">
-							<div class="row">
-				
-							{% comment %}
-								<div class="col-md-8">
-									<figure><img src="{% static 'assets/background.jpg' %}" alt=""></figure>
-								</div>	
-							{% endcomment %}
-							
-								<div class="col-md-5">
-									<div class="hero-content">
-										<h1 class="hero-title">Header Goes Here</h1>
-										<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi accusamus aut rerum sed maxime, magnam neque sapiente quidem</p>
-										<a href="#" class="button" style="border-color: #111132; background-color: #111132">BOOK A SESSION</a>
-										<a href="#" class="button" style="margin-left: 10px;">BUY OUR E-BOOK</a>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div> <!-- .hero-slider -->	
-
-				<div class="fullwidth-block" data-bg-color="#111113">
+				<div class="fullwidth-block">
 					<div class="container">
 						<div class="row">
 							<div class="col-md-8">
@@ -102,53 +78,8 @@
 									<a href="#" class="more-link">Read More</a>
 								</div>
 							</div>
-						</div>
-						
-						<div class="quote-section">
-							<div class="quote-slider">
-								<ul class="slides">
-									<li>
-										<figure class="quote-avatar"><img src="{% static 'dummy/avatar.png' %}"></figure>
-										<blockquote>
-											<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum reiciendis eveniet suscipit, totam doloribus iure quasi quos, quidem quam labore pariatur nesciunt rem unde odio a ex vel ullam, quis!</p>
-											<footer>
-												<cite>Jason Howard</cite>
-												<span>(CEO, Books author)</span>
-											</footer>
-										</blockquote>
-									</li>
-									<li>
-										<figure class="quote-avatar"><img src="{% static 'dummy/avatar.png' %}"></figure>
-										<blockquote>
-											<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum reiciendis eveniet suscipit, totam doloribus iure quasi quos, quidem quam labore pariatur nesciunt rem unde odio a ex vel ullam, quis!</p>
-											<footer>
-												<cite>Jason Howard</cite>
-												<span>(CEO, Books author)</span>
-											</footer>
-										</blockquote>
-									</li>
-									<li>
-										<figure class="quote-avatar"><img src="{% static 'dummy/avatar.png' %}"></figure>
-										<blockquote>
-											<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum reiciendis eveniet suscipit, totam doloribus iure quasi quos, quidem quam labore pariatur nesciunt rem unde odio a ex vel ullam, quis!</p>
-											<footer>
-												<cite>Jason Howard</cite>
-												<span>(CEO, Books author)</span>
-											</footer>
-										</blockquote>
-									</li>
-									<li>
-										<figure class="quote-avatar"><img src="{% static 'dummy/avatar.png' %}"></figure>
-										<blockquote>
-											<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum reiciendis eveniet suscipit, totam doloribus iure quasi quos, quidem quam labore pariatur nesciunt rem unde odio a ex vel ullam, quis!</p>
-											<footer>
-												<cite>Jason Howard</cite>
-												<span>(CEO, Books author)</span>
-											</footer>
-										</blockquote>
-									</li>
-								</ul>
-							</div>
+						</div>	
+							<div class=""><img style="border-radius: 20px;" src="{% static 'assets/2.jpg' %}"></div>			
 						</div>
 					</div>
 				</div>

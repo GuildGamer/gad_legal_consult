@@ -14,24 +14,46 @@ STATIC_DIR = os.path.join(BASE_DIR, 'static')
 SECRET_KEY = 'django-insecure-o4+q0%wq^!r)1sq(+1947+!-h2g@b-a3mp-=dxmj+x*vcve+r)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.43.251', '127.0.0.1','kubernetes.docker.internal']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'whitenoise.runserver_nostatic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    #I Included:
+    'djangoflutterwave',
+    'crispy_forms',
+    'django_waitress',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount', 
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',  
+    'django_extensions',
+    'phone_field',
+    'base',
+    
+
 ]
+
+SITE_ID = 1
+
+
+#ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -89,6 +111,14 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
 
 
 # Internationalization
@@ -118,3 +148,28 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+PHONENUMBER_DEFAULT_REGION = 'NG'
+
+#ACCOUNT CONFIGURATION
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = "optional"
+
+#flutterwave 
+FLW_PRODUCTION_PUBLIC_KEY = "your key"
+FLW_PRODUCTION_SECRET_KEY = "your key"
+FLW_SANDBOX_PUBLIC_KEY = "your key"
+FLW_SANDBOX_SECRET_KEY = "your key"
+FLW_SANDBOX = True
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_HOST = os.environ.get('DJANGO_STATIC_HOST', '')
+STATIC_URL = STATIC_HOST + '/static/'
+
+#whitenoise
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
+
+

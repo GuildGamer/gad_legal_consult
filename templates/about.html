@@ -4,9 +4,8 @@
 			{% block selected %}
 				<li class="menu-item"><a href="{% url 'base:home' %}">Home</a></li>
 				<li class="menu-item current-menu-item"><a href="{% url 'base:about' %}">About Us</a></li>
-				<li class="menu-item"><a href="{% url 'base:experience' %}">Experience</a></li>
-				<li class="menu-item"><a href="{% url 'base:service' %}">Service</a></li>
-				<li class="menu-item"><a href="{% url 'base:contact' %}">Contact</a></li>
+				<li class="menu-item"><a href="{% url 'base:blog' %}">Blog</a></li>
+				<li class="menu-item"><a href="{% url 'base:services' %}">Services</a></li>
 			{% endblock %}
 
 			{% block content %}
@@ -19,29 +18,14 @@
 						<p>Iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus.</p>
 
 						<div class="team">
-							<figure class="team-image"><img src="{% static 'dummy/person-1.png' %}" alt="person-1"></figure>
+							<figure class="team-image"><img src="{% static 'assets/2.jpg' %}" alt="person-1"></figure>
+							<div>
 							<h3 class="team-name">Steven Simon</h3>
 							<small class="team-desc">Main mechaninc</small>
 							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor ut tenetur dicta deserunt fugiat itaque voluptates doloremque dolore accusamus suscipit</p>
+							</div>
 						</div>
-						<div class="team">
-							<figure class="team-image"><img src="{% static 'dummy/person-2.png' %}" alt="person-2"></figure>
-							<h3 class="team-name">George Stevens</h3>
-							<small class="team-desc">Painter</small>
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus quisquam hic cum laboriosam, est saepe amet magni labore, corrupti recusandae</p>
-						</div>
-						<div class="team">
-							<figure class="team-image"><img src="{% static 'dummy/person-3.png' %}" alt="person-3"></figure>
-							<h3 class="team-name">David Smith</h3>
-							<small class="team-desc">Engineer</small>
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corrupti quisquam, odit! Mollitia, porro. Quidem officiis, harum tempora, voluptates distinctio quis</p>
-						</div>
-						<div class="team">
-							<figure class="team-image"><img src="{% static 'dummy/person-4.png' %}" alt="person-4"></figure>
-							<h3 class="team-name">Howarrd Newman</h3>
-							<small class="team-desc">Computer Specialist</small>
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repudiandae repellat ipsum optio nam! Error at minus fugit est voluptatum, placeat,</p>
-						</div>
+	
 					</div>
 				</div>
 
