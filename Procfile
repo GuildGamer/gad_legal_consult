@@ -1,1 +1,1 @@
-web: python manage.py serve
+web: python serve.py
