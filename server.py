@@ -3,6 +3,6 @@ from waitress import serve
 from glc.wsgi import application
     
 if __name__ == '__main__':
-    serve(application, port='8000')
+    serve(application)
 
 threads = 8
