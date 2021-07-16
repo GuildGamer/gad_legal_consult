@@ -7,6 +7,6 @@ if __name__ == '__main__':
     port = os.getenv('PORT', default=8000)
     serve(application, port=port)
 
-threads = 8
+threads = 9
 
 

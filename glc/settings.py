@@ -137,11 +137,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-#STATIC_URL = '/static/'
+STATIC_URL = '/static/'
 
-#STATICFILES_DIRS = [
-    #STATIC_DIR,
-    #]
+STATICFILES_DIRS = [
+    STATIC_DIR,
+    ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -162,8 +162,8 @@ FLW_SANDBOX_SECRET_KEY = "your key"
 FLW_SANDBOX = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATIC_HOST = os.environ.get('DJANGO_STATIC_HOST', '')
-STATIC_URL = STATIC_HOST + '/static/'
+#STATIC_HOST = os.environ.get('DJANGO_STATIC_HOST', '')
+#STATIC_URL = STATIC_HOST + '/static/'
 
 #whitenoise
 
