@@ -1,0 +1,104 @@
+/*
+ * Web Fonts from fontspring.com
+ *
+ * All OpenType features and all extended glyphs have been removed.
+ * Fully installable fonts can be purchased at http://www.fontspring.com
+ *
+ * The fonts included in this stylesheet are subject to the End User License you purchased
+ * from Fontspring. The fonts are protected under domestic and international trademark and 
+ * copyright law. You are prohibited from modifying, reverse engineering, duplicating, or
+ * distributing this font software.
+ *
+ * (c) 2010-2014 Fontspring
+ *
+ *
+ *
+ *
+ * The fonts included are copyrighted by the vendor listed below.
+ *
+ * Vendor:      Synthview Type Design
+ * License URL: http://www.fontspring.com/licenses/synthview/webfont
+ *
+ *
+ */
+
+@font-face {
+    font-family: 'Novecento Sans';
+    src: url("Novecentosanswide-Bold-webfont.dcc97f3ec98f.eot");
+    src: url("Novecentosanswide-Bold-webfont.dcc97f3ec98f.eot?#iefix") format('embedded-opentype'),
+         url("Novecentosanswide-Bold-webfont.ee5d8b195b71.woff2") format('woff2'),
+         url("Novecentosanswide-Bold-webfont.c64b7867d354.woff") format('woff'),
+         url("Novecentosanswide-Bold-webfont.d7964a6f864d.ttf") format('truetype'),
+         url("Novecentosanswide-Bold-webfont.21d0ab84f56f.svg#novecento_sans_wide_bookbold") format('svg');
+    font-weight: 700;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Novecento Sans';
+    src: url("Novecentosanswide-Book-webfont.9a705eb0f687.eot");
+    src: url("Novecentosanswide-Book-webfont.9a705eb0f687.eot?#iefix") format('embedded-opentype'),
+         url("Novecentosanswide-Book-webfont.c5cdcfdc8955.woff2") format('woff2'),
+         url("Novecentosanswide-Book-webfont.708a1faf191c.woff") format('woff'),
+         url("Novecentosanswide-Book-webfont.23be618483ae.ttf") format('truetype'),
+         url("Novecentosanswide-Book-webfont.2355bacb8874.svg#novecento_sans_widebook") format('svg');
+    font-weight: 300;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Novecento Sans';
+    src: url("Novecentosanswide-DemiBold-webfont.e22ee5c559d7.eot");
+    src: url("Novecentosanswide-DemiBold-webfont.e22ee5c559d7.eot?#iefix") format('embedded-opentype'),
+         url("Novecentosanswide-DemiBold-webfont.5626b81380f3.woff2") format('woff2'),
+         url("Novecentosanswide-DemiBold-webfont.12a593df4beb.woff") format('woff'),
+         url("Novecentosanswide-DemiBold-webfont.351016ca0a9b.ttf") format('truetype'),
+         url("Novecentosanswide-DemiBold-webfont.e61679b867ec.svg#novecento_sans_widedemibold") format('svg');
+    font-weight: 600;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Novecento Sans';
+    src: url("Novecentosanswide-Light-webfont.17c6a771baaa.eot");
+    src: url("Novecentosanswide-Light-webfont.17c6a771baaa.eot?#iefix") format('embedded-opentype'),
+         url("Novecentosanswide-Light-webfont.bf8699c12984.woff2") format('woff2'),
+         url("Novecentosanswide-Light-webfont.46a36c1b0b48.woff") format('woff'),
+         url("Novecentosanswide-Light-webfont.d1797076ad86.ttf") format('truetype'),
+         url("Novecentosanswide-Light-webfont.bd95df1f7798.svg#novecento_sans_widelight") format('svg');
+    font-weight: 200;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Novecento Sans';
+    src: url("Novecentosanswide-Medium-webfont.f1ad1343280a.eot");
+    src: url("Novecentosanswide-Medium-webfont.f1ad1343280a.eot?#iefix") format('embedded-opentype'),
+         url("Novecentosanswide-Medium-webfont.5c1eeec80543.woff2") format('woff2'),
+         url("Novecentosanswide-Medium-webfont.7b15943bf9c8.woff") format('woff'),
+         url("Novecentosanswide-Medium-webfont.068ae87860db.ttf") format('truetype'),
+         url("Novecentosanswide-Medium-webfont.3d58aa7befb0.svg#novecento_sans_widemedium") format('svg');
+    font-weight: 500;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Novecento Sans';
+    src: url("Novecentosanswide-Normal-webfont.86856ad63076.eot");
+    src: url("Novecentosanswide-Normal-webfont.86856ad63076.eot?#iefix") format('embedded-opentype'),
+         url("Novecentosanswide-Normal-webfont.3565051922a4.woff2") format('woff2'),
+         url("Novecentosanswide-Normal-webfont.ffa36943aa8c.woff") format('woff'),
+         url("Novecentosanswide-Normal-webfont.f3eb240659d5.ttf") format('truetype'),
+         url("Novecentosanswide-Normal-webfont.930ce310703f.svg#novecento_sans_widenormal") format('svg');
+    font-weight: 400;
+    font-style: normal;
+
+}
+
+
+

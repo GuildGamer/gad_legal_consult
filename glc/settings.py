@@ -163,7 +163,7 @@ FLW_SANDBOX = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_HOST = os.environ.get('DJANGO_STATIC_HOST', '')
-STATIC_URL = STATIC_HOST + '/static/'
+STATIC_URL = STATIC_HOST + '/staticfiles/'
 
 #whitenoise
 
