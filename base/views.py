@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.contrib import messages
 import requests 
 from django.contrib.auth.decorators import login_required
-from .forms import SessionForm, EbookForm
+from .forms import SessionForm, EbookForm, PostForm
 #from django.views.generic import View
 
 def home(request):
@@ -11,9 +11,28 @@ def home(request):
 
 def about(request):
     return render(request, "about.html")
-
+    
+@login_required
 def blog(request):
-    return render(request, "blog.html")
+    if request.method == 'POST':
+        post_form  = PostForm(data=request.POST)
+        if post_form.is_valid():
+            post = post_form.save(commit=False)
+            post.author = request.user
+            post.save()
+
+            messages.info(request, "post made sucessfully!")
+            return redirect("base:blog")
+        else:
+            messages.error(request, post_form.errors)
+    else:
+        post_form = PostForm()
+
+    context = {
+            'p_form': post_form,
+    }
+
+    return render(request,  "blog.html", context)
 
 def services(request):
     return render(request, "service.html")

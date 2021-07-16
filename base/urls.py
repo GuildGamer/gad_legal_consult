@@ -6,7 +6,7 @@ from .views import(
     session,
     services,
     buy_ebook,
-    ebook_view
+    ebook_view,
 )
 
 app_name = 'base'

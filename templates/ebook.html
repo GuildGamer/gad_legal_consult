@@ -1,6 +1,13 @@
                 {% extends "base.html" %}
 				{% load static %}
 
+                {% block selected %}
+				<li class="menu-item"><a href="{% url 'base:home' %}">Home</a></li>
+				<li class="menu-item "><a href="{% url 'base:about' %}">About Us</a></li>
+				<li class="menu-item"><a href="{% url 'base:blog' %}">Blog</a></li>
+				<li class="menu-item"><a href="{% url 'base:services' %}">Services</a></li>
+			    {% endblock %}
+
                 {% block content %}
                     <a href="{% url 'base:ebook_view' %}"class="button" style="margin-left: 10px;">BUY OUR E-BOOK</a>
                 {% endblock %}

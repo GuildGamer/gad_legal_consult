@@ -31,7 +31,7 @@ class Buyer(models.Model):
     def __str__(self):
         return self.name
 
-class Post(models.Model):
+class a_Post(models.Model):
     author= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
     message = TextField()

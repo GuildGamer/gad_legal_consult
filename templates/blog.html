@@ -1,5 +1,6 @@
 			{% extends "base.html" %}
 			{% load static %}
+			{% load crispy_forms_tags %}
 
 			{% block selected %}
 				<li class="menu-item"><a href="{% url 'base:home' %}">Home</a></li>
@@ -11,46 +12,11 @@
 			{% block content %}
 
 			<main class="main-content">
-				
-				<div class="fullwidth-block content">
-					<div class="container">
-						<h2 class="entry-title">Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit sed quia consequuntur magni dolores eos qui ratione</h2>
-						<p>Iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus.</p>
-
-						<div class="timeline">
-							<div class="milestone">
-								<h3 class="year">1998</h3>
-								<h2 class="milestone-title">Phasellus luctus rhoncus</h2>
-								<p>Consequuntur rerum cumque temporibus vitae facilis odio explicabo ullam pariatur deserunt esse a quas, quos reprehenderit non mollitia</p>
-							</div>
-							<div class="milestone">
-								<h3 class="year">2004</h3>
-								<h2 class="milestone-title">iaculis in augue venenati</h2>
-								<p>Velit illum enim id deserunt veritatis ipsa fugit, voluptatibus tempore alias maxime cumque necessitatibus ullam.</p>
-							</div>
-							<div class="milestone">
-								<h3 class="year">2009</h3>
-								<h2 class="milestone-title">Cras tellus lorem rutrum</h2>
-								<p>Quia harum doloremque aliquid labore delectus fugiat aspernatur esse placeat cum veniam velit corporis quam voluptatem</p>
-							</div>
-							<div class="milestone">
-								<h3 class="year">2014</h3>
-								<h2 class="milestone-title">Vestibulum in eleifend ligula</h2>
-								<p>elit. Corporis ratione animi, ipsa quam deleniti voluptatibus ipsum illo natus, provident soluta impedit</p>
-							</div>	
-						</div>
-
-						<div class="counter">
-							<div class="num">1500</div>
-							<div class="copy">
-								<span>Satisfied Clients</span>
-								<span>In our whole career</span>
-							</div>
-						</div>
-
-					</div>
-				</div>
-
+				<form method="POST">
+					{% csrf_token %}
+					{{ p_form.message }}
+					<button href="primary-btn order-submit" type="submit" style="width: initial;">Post</button>
+				</form>
 			</main> <!-- .main-content -->
 
 			{% endblock %}

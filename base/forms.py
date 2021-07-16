@@ -1,5 +1,5 @@
 from django import forms
-from base.models import Session, Buyer
+from base.models import Session, Buyer, a_Post
 from django.contrib.auth.models import User
 
 
@@ -37,8 +37,8 @@ class PostForm(forms.ModelForm):
      message = forms.CharField()
 
      class Meta():
-          model = Buyer
-          fields = ('author','message')
+          model = a_Post
+          fields = ('message',)
           widgets = {
           'message' : forms.TextInput(attrs={}),
           }

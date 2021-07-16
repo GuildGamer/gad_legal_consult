@@ -27,6 +27,16 @@
 	<body>
 		
 		<div id="site-content">
+
+			{% if messages %}
+			<div class="container" style="background-color: white;  border-radius: 8px; padding-top: 5px; padding-bottom: 5px; opacity: 0.6;">
+			<ul class="messages">
+			{% for message in messages %}
+			<li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+			{% endfor %}
+			</ul>
+			</div>
+			{% endif %}
 			
 			<header class="site-header" style="background-image: url('{% static 'assets/background.jpg' %}'); background-size:cover;">
 				<div class="container">
