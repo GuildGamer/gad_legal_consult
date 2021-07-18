@@ -1,5 +1,5 @@
 from django import forms
-from base.models import Session, Buyer, a_Post
+from base.models import Session, Buyer
 from django.contrib.auth.models import User
 
 
@@ -32,13 +32,16 @@ class EbookForm(forms.ModelForm):
           'email' : forms.TextInput(attrs={}),
           'phone' : forms.TextInput(attrs={}),
           }
-class PostForm(forms.ModelForm):
-     author = forms.CharField(widget=forms.TextInput())
+'''class PostForm(forms.ModelForm):
+     author = forms.CharField()
      message = forms.CharField()
 
      class Meta():
           model = a_Post
-          fields = ('message',)
+          fields = ('message','author')
           widgets = {
           'message' : forms.TextInput(attrs={}),
           }
+'''
+class PostForm(forms.Form):
+    message = forms.CharField(widget=forms.Textarea(attrs={'id':'messsage'}), required=True)

@@ -1,19 +1,19 @@
 from django.urls import path
 from .views import(
-    blog,
     home,
     about,
     session,
     services,
     buy_ebook,
     ebook_view,
+    BlogView
 )
 
 app_name = 'base'
 
 urlpatterns = [
     path ('', home, name='home'),
-    path ('blog/', blog, name='blog'),
+    path ('blog/', BlogView.as_view(), name='blog'),
     path ('about/', about, name='about'),
     path ('services/', services, name='services'),
     path ('buy_e-book/', buy_ebook, name='ebook'),

@@ -12,6 +12,21 @@
 			{% block content %}
 
 			<main class="main-content">
+				{% if o_posts %}
+					{% for o_post in o_posts %}
+					<div class="col-md-4">
+						<div class="latest-news">
+							<ul>
+								<li>
+									<h3 class="entry-title"><a href="#">{{o_post.message}}</a></h3>
+									<small class="date">by {{o_post.author.username}}</small>
+								</li>
+							</ul>
+						</div> <!-- .latest-news -->
+					</div>
+					{% endfor %}
+				{% endif %}
+
 				<form method="POST">
 					{% csrf_token %}
 					{{ p_form.message }}
