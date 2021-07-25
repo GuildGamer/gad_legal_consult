@@ -42,11 +42,6 @@ class BlogView(View, LoginRequiredMixin):
 
             post.save()
                     
-            '''
-            post = post_form.save(commit=False)
-            post.author = request.user.username
-            post.save()
-            '''
             context = {
             'p_form': post_form, 'o_posts': APost.objects.all(),
             }
@@ -55,7 +50,24 @@ class BlogView(View, LoginRequiredMixin):
             return render(self.request, "blog.html", context)
         else:
             messages.error(self.request, post_form.errors)
-       
+    '''
+    def like(request, slug):
+        post = get_object_or_404(APost, slug=slug)
+        if request.user in post.users:
+            post.likes -= 1
+            post.user = post.users.remove(request.user)
+        else: 
+            post.likes += 1
+            post.user = post.users.add(request.user)
+
+        context = {
+        'o_posts': APost.objects.all(),
+        }
+
+        return redirect("base:blog", context)
+    '''
+
+
 
 def services(request):
     return render(request, "service.html")
@@ -85,37 +97,7 @@ def session(request):
 
 def ebook_view(request):
     return render(request, "ebook.html")
-
-'''class BlogView(View, LoginRequiredMixin):
-
-    def get(self, *args, **kwargs):
-        #form
-        post_form = PostForm()
-        posts = a_Post.objects.all()
-        #posts = get_object_or_404(a_Post)
-        context = {
-            'post_form': post_form, 'posts':posts
-        }
-
-        return render(self.request, "blog.html", context)
-    def post(self, *args, **kwargs):
-        post_form = PostForm(self.request.POST or None)
-
-        posts =a_Post.objects.all()
-        if post_form.is_valid():
-            post = post_form.save(commit=False)
-            post.author = self.request.user
-            post.save()
-
-        context = {
-        'post_form': post_form, 'posts':posts
-        }
-        return redirect('base:blog')
-'''
-        
-    
-
-
+            
 import requests
 def buy_ebook(request):
 

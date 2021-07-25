@@ -6,7 +6,7 @@ from .views import(
     services,
     buy_ebook,
     ebook_view,
-    BlogView
+    BlogView, 
 )
 
 app_name = 'base'

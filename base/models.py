@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.db.models.fields import TextField
 from phone_field import PhoneField
 
 BUSINESS_TYPES = (
@@ -34,8 +33,11 @@ class Buyer(models.Model):
 class APost(models.Model):
     author= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
-    message = TextField()
-
+    message = models.TextField()
+    likes = models.IntegerField(null=True, blank=True)
+    comments = models.TextField(null=True, blank=True)
+    users = []
+        
     def __str__(self):
         return self.message
 
