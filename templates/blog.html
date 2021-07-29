@@ -19,18 +19,19 @@
 							<ul>
 								<li>
 									<h3 class="entry-title"><a href="#">{{o_post.message}}</a></h3>
-									<small class="date">by {{o_post.author.username}}</small>
+									<small class="date">by {{o_post.author.username}}</small></li><br>
+									<small class="date">likes: {{o_post.likes}}</small>
 								</li>
 							</ul>
 						</div> <!-- .latest-news -->
 					</div>
-
-					<a href=""><i class="fa fa-thumbs-up"></i></a>
+					<a href="{% url 'base:like' o_post.slug %}"><i class="fa fa-thumbs-up"></i></a>
+					<i class="fa fa-comment"></i>
 					{% endfor %}
 				{% endif %}
 
 					
-					<i class="fa fa-comment"></i>
+					
 
 				<form method="POST">
 					{% csrf_token %}

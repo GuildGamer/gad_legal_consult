@@ -1,6 +1,5 @@
-from base.models import APost
 from django.shortcuts import redirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.contrib import messages
 import requests 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -8,7 +7,21 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from .forms import SessionForm, EbookForm, PostForm
 from django.views.generic import View
+from django.utils.text import slugify 
+from django.db.models import Q
+#for REST FRAMEWORK
+from django.http import HttpResponse, JsonResponse
+from base.models import *
+from base.serializers import PostModelSerializer
+from django.views.decorators.csrf import csrf_exempt
 #from django.views.generic import View
+
+@csrf_exempt
+def get_data(request):
+	data = APost.objects.all()
+	if request.method == 'GET':
+		serializer = PostModelSerializer(data, many=True)
+		return JsonResponse(serializer.data, safe=False)
 
 def home(request):
     return render(request, "index.html")
@@ -37,6 +50,7 @@ class BlogView(View, LoginRequiredMixin):
 
             post = APost(
                     message = message,
+                    slug = slugify(message[:5]),
                     author=self.request.user,
             )
 
@@ -50,24 +64,27 @@ class BlogView(View, LoginRequiredMixin):
             return render(self.request, "blog.html", context)
         else:
             messages.error(self.request, post_form.errors)
-    '''
-    def like(request, slug):
-        post = get_object_or_404(APost, slug=slug)
-        if request.user in post.users:
-            post.likes -= 1
-            post.user = post.users.remove(request.user)
-        else: 
-            post.likes += 1
-            post.user = post.users.add(request.user)
 
-        context = {
-        'o_posts': APost.objects.all(),
-        }
+def like(request, slug):
+    post = get_object_or_404(APost, slug=slug)
+    post_form = PostForm()
+    #post = APost.objects.filter(slug=slug)
+    user_list = post.users.all().filter(Q(id__icontains=request.user.id))
+    if request.user in user_list and post and post.likes != 0:
+    #if request.user in post.users:
+        post.likes -= 1
+        post.users.remove(request.user)
+        post.save()
+    else: 
+        post.likes += 1
+        post.users.add(request.user)
+        post.save()
 
-        return redirect("base:blog", context)
-    '''
+    context = {
+    'p_form': post_form,'o_posts': APost.objects.all(),
+    }
 
-
+    return redirect("base:blog")
 
 def services(request):
     return render(request, "service.html")

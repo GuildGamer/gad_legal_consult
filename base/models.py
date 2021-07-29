@@ -17,7 +17,7 @@ class Session(models.Model):
     email = models.CharField(max_length=100)
     phone = PhoneField(blank=True, help_text='Contact phone number')
     business_type = models.CharField(choices=BUSINESS_TYPES, max_length=2)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    #user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -33,13 +33,13 @@ class Buyer(models.Model):
 class APost(models.Model):
     author= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
+    #post_id = models.AutoField(primary_key=True)
+    slug = models.SlugField(unique=True)
     message = models.TextField()
-    likes = models.IntegerField(null=True, blank=True)
+    likes = models.IntegerField(default=0)
     comments = models.TextField(null=True, blank=True)
-    users = []
+    users = models.ManyToManyField(User, related_name='likes',blank=True)
         
     def __str__(self):
         return self.message
-
-
 

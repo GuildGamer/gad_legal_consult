@@ -7,6 +7,7 @@ from .views import(
     buy_ebook,
     ebook_view,
     BlogView, 
+    like
 )
 
 app_name = 'base'
@@ -18,6 +19,7 @@ urlpatterns = [
     path ('services/', services, name='services'),
     path ('buy_e-book/', buy_ebook, name='ebook'),
     path ('e-book/', ebook_view, name='ebook_view'),
-    path ('book_a_session/', session, name='session'),
+    path ('book-a-session/', session, name='session'),
+    path ('like-post/<slug>/', like, name='like'),
 
 ]
