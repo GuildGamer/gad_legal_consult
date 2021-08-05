@@ -1,25 +1,32 @@
 from django.urls import path
+from knox import views as knox_views
 from .views import(
-    home,
-    about,
+    post_detail,
     session,
     services,
-    buy_ebook,
     ebook_view,
-    BlogView, 
-    like
+    like,
+    book_session_view,
+    post_list,
+    RegisterAPI,
+    LoginAPI,
+    like_post,
+    comment_on_post
 )
 
 app_name = 'base'
 
 urlpatterns = [
-    path ('', home, name='home'),
-    path ('blog/', BlogView.as_view(), name='blog'),
-    path ('about/', about, name='about'),
+    path('signup/', RegisterAPI.as_view(), name='sign-up'),
+    path('login/', LoginAPI.as_view(), name='login'),
+    path('logout/', knox_views.LogoutView.as_view(), name='logout'),
+    path ('blog/', post_list, name='blog'),
+    path ('comment-on-blog-post/', comment_on_post, name='comment-on-blog-post'),
+    path ('consultation/', book_session_view , name='book-a-session'),
+    path ('blog-post/<post_id>', post_detail, name='blog-post'),
     path ('services/', services, name='services'),
-    path ('buy_e-book/', buy_ebook, name='ebook'),
     path ('e-book/', ebook_view, name='ebook_view'),
     path ('book-a-session/', session, name='session'),
-    path ('like-post/<slug>/', like, name='like'),
-
+    path ('blog/like-post/<slug>/', like, name='like'),
 ]
+

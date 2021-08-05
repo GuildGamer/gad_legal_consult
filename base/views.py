@@ -1,69 +1,198 @@
+from django import forms
 from django.shortcuts import redirect
-from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 import requests 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ObjectDoesNotExist
-from .forms import SessionForm, EbookForm, PostForm
+from requests.api import post
+
+from base import serializers
+from .forms import SessionForm, PostForm
 from django.views.generic import View
 from django.utils.text import slugify 
 from django.db.models import Q
 #for REST FRAMEWORK
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from base.models import *
-from base.serializers import PostModelSerializer
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-#from django.views.generic import View
+# FOR API VIEWS
+from rest_framework import viewsets
+from base.serializers import BlogModelSerializer, SessionModelSerializer, UserSerializer, RegisterSerializer, CommentModelSerializer
+from base.models import Session, APost
+from rest_framework import status, generics, permissions
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from knox.models import AuthToken
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+from knox.views import LoginView as KnoxLoginView
+from django.contrib.auth import login
 
-@csrf_exempt
-def get_data(request):
-	data = APost.objects.all()
-	if request.method == 'GET':
-		serializer = PostModelSerializer(data, many=True)
-		return JsonResponse(serializer.data, safe=False)
 
-def home(request):
-    return render(request, "index.html")
+#START API VIEWS
+#API VIEW FOR ALL POSTS
 
-def services(request):
-    return render(request, "service.html")
+# Blog API
+@api_view(['GET', 'POST'])
+def post_list(request):
+    if request.method == 'GET':
+        posts = APost.objects.all()
+        serializer = BlogModelSerializer(posts, many=True)
+        data = {
+            "success": posts != None,
+            "reason": "",
+            "isAdmin": request.user.is_superuser,
+            "posts": serializer.data,
+            }
+        return Response(data)
 
-def about(request):
-    return render(request, "about.html")
-   
-class BlogView(View, LoginRequiredMixin):
+    elif request.method == 'POST':
+        serializer = BlogModelSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, *args, **kwargs):
-        #form
-        post_form = PostForm()
-        context = {
-            'p_form': post_form, 'o_posts': APost.objects.all(),
+# Post Detail API 
+@api_view(['GET', 'PUT', 'DELETE'])
+def post_detail(request, post_id):
+    try:
+        post = APost.objects.get(post_id=int(post_id))
+    except APost.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = BlogModelSerializer(post)
+        data = {
+            "post": serializer.data ,
+            "comments": list(serializer.data["comments"]),
+            "success": post != None,
+            "posts": serializer.data,
+            "reason": "",
+            "logged_in": request.user.is_authenticated,
+            "username": request.user.username,
+            "isAdmin": request.user.is_superuser,
+            "liked": request.user in list(serializer.data["users"])
+            }
+        return Response(data)
+
+    elif request.method == 'PUT':
+        serializer = BlogModelSerializer(post, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        post.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['POST'])
+def like_post(request):
+    serializer = CommentModelSerializer(data=request.data)
+    post = APost.objects.filter(post_id = int(serializer.data['post_id']))[0]
+    user_list = post.users.all()
+    if request.user in user_list and post and post.likes != 0:
+    #if request.user in post.users:
+        post.likes -= 1
+        post.users.remove(request.user)
+        post.save()
+    else: 
+        post.likes += 1
+        post.users.add(request.user)
+        post.save()
+
+@api_view(['POST'])    
+def comment_on_post(request):
+    serializer = CommentModelSerializer(data=request.data)
+    post = APost.objects.filter(post_id = int(serializer.data['post_id']))[0]
+    if serializer.is_valid():
+        serializer.author = request.user
+        serializer.save()
+        post.comments.add(serializer.data['comment'])
+        data = {
+            "comment": serializer.data['comment'],
+            "reason": "",
+            "success": True,
         }
+        return Response(data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        return render(self.request, "blog.html", context)
+# Register API
 
-    def post(self, *args, **kwargs):
-        post_form = PostForm(self.request.POST or None)
-        if post_form.is_valid():
-            message=post_form.cleaned_data.get('message')
+class RegisterAPI(generics.GenericAPIView):
+    serializer_class = RegisterSerializer
 
-            post = APost(
-                    message = message,
-                    slug = slugify(message[:5]),
-                    author=self.request.user,
+    @method_decorator(csrf_exempt)
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        if user in User.objects.all():
+            return Response(
+                {
+                    #"user": UserSerializer(user, context=self.get_serializer_context()).data,
+                    "success": True,
+                    "reason": "",
+                    "token": AuthToken.objects.create(user)[1]
+                }
+            )
+        else: 
+             return Response(
+                {
+                    #"user": UserSerializer(user, context=self.get_serializer_context()).data,
+                    "success": False,
+                    "reason": serializer.errors,
+                    "token": AuthToken.objects.create(user)[1]
+                }
             )
 
-            post.save()
-                    
-            context = {
-            'p_form': post_form, 'o_posts': APost.objects.all(),
-            }
+class LoginAPI(KnoxLoginView):
+    permission_classes = (permissions.AllowAny,)
 
-            messages.info(self.request, "post made sucessfully!")
-            return render(self.request, "blog.html", context)
+    @method_decorator(csrf_exempt)
+    def post(self, request, format=None):
+        serializer = AuthTokenSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        login(request, user)
+        return super(LoginAPI, self).post(request, format=None)
+        '''
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.validated_data['user']
+            login(request, user)
+            data = {
+                "success": True,
+                "reason": "",
+                "token": AuthToken.objects.filter(user=user)[1]
+            }
+            return Response(data, status=status.HTTP_201_CREATED)
         else:
-            messages.error(self.request, post_form.errors)
+            data = {
+                "success": False,
+                "reason": serializer.errors,
+                "token": ""
+            }
+            return Response(data, status=status.HTTP_400_BAD_REQUEST)
+        '''
+
+# Session API
+@api_view(['POST'])
+def book_session_view(request):
+    serializer = SessionModelSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        '''data = {
+            "success":True,
+
+        }'''
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+#END API VIEWS
 
 def like(request, slug):
     post = get_object_or_404(APost, slug=slug)
@@ -85,6 +214,7 @@ def like(request, slug):
     }
 
     return redirect("base:blog")
+
 
 def services(request):
     return render(request, "service.html")
@@ -115,47 +245,7 @@ def session(request):
 def ebook_view(request):
     return render(request, "ebook.html")
             
-import requests
-def buy_ebook(request):
 
-    
-
-    """ebook_form = EbookForm(data=request.POST)
-    if ebook_form.is_valid():
-
-        eb = ebook_form.save()
-        eb.save()"""
-
-    current_user = request.user
-            
-
-    url = 'https://api.flutterwave.com/v3/payments'
-    myobj = {
-                "tx_ref":"glc-tx-"+str(current_user.id),
-                "amount":"2000",
-                "currency":"NGN",
-                "redirect_url":"https://localhost:8000/successful.html",
-                "customer":{
-                    "email":current_user.email,
-                    "name":current_user.username,
-                },
-                "customizations":{
-                    "title":"Ebook Name",
-                    "description":"It's worth the purchase",
-                    "logo":"https://assets.piedpiper.com/logo.png"
-                }
-        }
-    
-    buyer_details = requests.post(url, data = myobj)
-        
-
-    messages.info(request, "You have sucessfully booked a session with the attorney")
-    return buyer_details
-
-#like view
-@login_required
-def like_view():
-    pass
 
 
    

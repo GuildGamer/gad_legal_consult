@@ -45,3 +45,6 @@ class EbookForm(forms.ModelForm):
 '''
 class PostForm(forms.Form):
     message = forms.CharField(widget=forms.Textarea(attrs={'id':'messsage'}), required=True)
+
+class CommentForm(forms.Form):
+     comment = forms.CharField(widget=forms.TextInput(attrs={'id':'comment'}), required=True)

@@ -1,25 +1,34 @@
-from django.contrib.auth.models import User
-from base.models import APost, Buyer, Session
+from base.models import Session, APost, Comment
 from rest_framework import serializers
+from django.contrib.auth.models import User
 
-
-class UserModelSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = User
-        fields = ['url', 'username', 'email', 'groups']
-
-
-class SessionModelSerializer(serializers.HyperlinkedModelSerializer):
+class SessionModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Session
-        fields = ['url', 'name', 'email', 'phone', 'business_type']
+        fields = ['id', 'full_name', 'email', 'phone', 'reason', 'business_type']
 
-class BuyerModelSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Buyer
-        fields = ['url', 'name', 'email', 'phone']
-
-class PostModelSerializer(serializers.HyperlinkedModelSerializer):
+class BlogModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = APost
-        fields = ['url', 'author', 'timestamp', 'slug', 'messages', 'likes', 'comments']
+        fields = ['post_id', 'author', 'date_created', 'heading', 'content', 'like_count', 'comments','users',]
+
+class CommentModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ['author', 'comment', 'timestamp']
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username','email']
+
+class RegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username','email','password']
+
+        extra_kwargs = {'password': {'write_only': True}}
+
+        def create(self, validated_data):
+            user = User.objects.create_user(validated_data['username'], validated_data['email'], validated_data['password'])
+            return user
