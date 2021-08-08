@@ -24,10 +24,13 @@ from base.models import Session, APost
 from rest_framework import status, generics, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+from django.contrib.auth import login
 from knox.models import AuthToken
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.views import LoginView as KnoxLoginView
-from django.contrib.auth import login
+from rest_framework.authentication import authenticate
+
 
 
 #START API VIEWS
@@ -68,7 +71,6 @@ def post_detail(request, post_id):
             "post": serializer.data ,
             "comments": list(serializer.data["comments"]),
             "success": post != None,
-            "posts": serializer.data,
             "reason": "",
             "logged_in": request.user.is_authenticated,
             "username": request.user.username,
@@ -153,43 +155,43 @@ class LoginAPI(KnoxLoginView):
     permission_classes = (permissions.AllowAny,)
 
     @method_decorator(csrf_exempt)
-    def post(self, request, format=None):
+    def post(self, request):
         serializer = AuthTokenSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        login(request, user)
-        return super(LoginAPI, self).post(request, format=None)
-        '''
         if serializer.is_valid(raise_exception=True):
             user = serializer.validated_data['user']
+            authenticate(user)
             login(request, user)
             data = {
                 "success": True,
                 "reason": "",
-                "token": AuthToken.objects.filter(user=user)[1]
+                "token":  AuthToken.objects.create(user)[1]
             }
-            return Response(data, status=status.HTTP_201_CREATED)
-        else:
+            return Response(data)
+        else: 
             data = {
                 "success": False,
-                "reason": serializer.errors,
-                "token": ""
+                "reason":  serializer.errors,
+                "token":  ""
             }
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
-        '''
-
+       
 # Session API
 @api_view(['POST'])
 def book_session_view(request):
     serializer = SessionModelSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        '''data = {
+        data = {
             "success":True,
-
-        }'''
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            "reason": "",
+        }
+        return Response(data, status=status.HTTP_201_CREATED)
+    else:
+        data = {
+            "success":False,
+            "reason": serializer.errors,
+        }
+        return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
 
 #END API VIEWS

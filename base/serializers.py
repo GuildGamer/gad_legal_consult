@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 class SessionModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Session
-        fields = ['id', 'full_name', 'email', 'phone', 'reason', 'business_type']
+        fields = ['id', 'full_name', 'email', 'phone', 'reason']
 
 class BlogModelSerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,6 +29,6 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         extra_kwargs = {'password': {'write_only': True}}
 
-        def create(self, validated_data):
-            user = User.objects.create_user(validated_data['username'], validated_data['email'], validated_data['password'])
-            return user
+    def create(self, validated_data):
+        user = User.objects.create_user(validated_data['username'], validated_data['email'], validated_data['password'])
+        return user

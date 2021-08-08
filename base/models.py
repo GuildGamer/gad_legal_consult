@@ -17,11 +17,11 @@ class Session(models.Model):
     email = models.CharField(max_length=100)
     reason = models.CharField(max_length=256)
     phone = PhoneField(blank=True, help_text='Contact phone number')
-    business_type = models.CharField(choices=BUSINESS_TYPES, max_length=2)
+    #business_type = models.CharField(choices=BUSINESS_TYPES, max_length=2)
     #user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return self.full_name
 
 class Buyer(models.Model):
     name = models.CharField(max_length=50)

@@ -17,12 +17,12 @@ from .views import(
 app_name = 'base'
 
 urlpatterns = [
-    path('signup/', RegisterAPI.as_view(), name='sign-up'),
-    path('login/', LoginAPI.as_view(), name='login'),
+    path('signup/', RegisterAPI.as_view(), name='signup'),
+    path('signin/', LoginAPI.as_view(), name='signin'),
     path('logout/', knox_views.LogoutView.as_view(), name='logout'),
     path ('blog/', post_list, name='blog'),
     path ('comment-on-blog-post/', comment_on_post, name='comment-on-blog-post'),
-    path ('consultation/', book_session_view , name='book-a-session'),
+    path ('book-consultation/', book_session_view , name='book-a-session'),
     path ('blog-post/<post_id>', post_detail, name='blog-post'),
     path ('services/', services, name='services'),
     path ('e-book/', ebook_view, name='ebook_view'),
