@@ -122,7 +122,7 @@ AUTHENTICATION_BACKENDS = [
 
 CORS_ORIGIN_WHITELIST = (
 
-       'https://gad-legal-consult.netlify.app',
+       'https://gad-legal-consult.netlify.app/',
 
 )
 
