@@ -16,7 +16,7 @@ STATIC_DIR = os.path.join(BASE_DIR, 'static')
 SECRET_KEY = 'django-insecure-o4+q0%wq^!r)1sq(+1947+!-h2g@b-a3mp-=dxmj+x*vcve+r)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = 'Flase'
+DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.43.251', '127.0.0.1','kubernetes.docker.internal', 'hp', 'secure-spire-44407.herokuapp.com']
 
@@ -119,13 +119,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 #should change later to specific url
-#CORS_ALLOW_ALL_ORIGINS = True
-
-CORS_ORIGIN_WHITELIST = (
-
-       "https://gad-legal-consult.netlify.app",
-
-)
+CORS_ORIGIN_ALLOW_ALL = True
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
