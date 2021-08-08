@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'phone_field',
     'rest_framework',
     'rest_framework.authtoken',
-    'knox',
     'base',
     'corsheaders',
     
