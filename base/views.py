@@ -1,22 +1,10 @@
-from django import forms
-from django import http
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
-import requests 
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
-from requests.api import post
-from rest_framework import response
 from rest_framework.exceptions import AuthenticationFailed
-
-from base import serializers
 from .forms import SessionForm, PostForm
-from django.views.generic import View
-from django.utils.text import slugify 
 from django.db.models import Q
 #for REST FRAMEWORK
-from django.http import JsonResponse
 from base.models import *
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -24,25 +12,16 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
 from base.serializers import (
     BlogModelSerializer,
-    #LoginSerializer,  
     SessionModelSerializer, 
-    #RegistrationSerializer, 
     CommentModelSerializer,
     UserSerializer
 )
 
 from base.models import Session, APost
-from rest_framework import status, generics, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
 from django.contrib.auth import login
-from rest_framework.authtoken.serializers import AuthTokenSerializer
-from rest_framework.authentication import authenticate
-
 from rest_framework import status
-from rest_framework.generics import RetrieveUpdateAPIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 import jwt, datetime
 
@@ -78,7 +57,7 @@ class LoginView(APIView):
             }
 
             return Response(data)
-
+        '''
         if not user.check_password(password):
             data  = {
                 'success': False,
@@ -87,6 +66,7 @@ class LoginView(APIView):
             }
 
             return Response(data)
+        '''
 
         payload = {
             'id': user.id,
