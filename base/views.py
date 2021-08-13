@@ -57,7 +57,7 @@ class LoginView(APIView):
             }
 
             return Response(data)
-        '''
+            
         if not user.check_password(password):
             data  = {
                 'success': False,
@@ -66,7 +66,6 @@ class LoginView(APIView):
             }
 
             return Response(data)
-        '''
 
         payload = {
             'id': user.id,
@@ -126,7 +125,7 @@ def post_list(request):
         data = {
             "success": posts != None,
             "reason": "",
-            "isAdmin": request.user.is_superuser,
+            "isAdmin": request.user.is_staff,
             "posts": serializer.data,
             }
         return Response(data)
