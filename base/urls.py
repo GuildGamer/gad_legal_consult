@@ -1,5 +1,4 @@
 from django.urls import path
-from knox import views as knox_views
 from .views import(
     post_detail,
     session,
@@ -8,8 +7,9 @@ from .views import(
     like,
     book_session_view,
     post_list,
-    RegisterAPI,
-    LoginAPI,
+    RegistrationView,
+    LoginView,
+    UserView,
     like_post,
     comment_on_post
 )
@@ -17,9 +17,9 @@ from .views import(
 app_name = 'base'
 
 urlpatterns = [
-    path('signup/', RegisterAPI.as_view(), name='signup'),
-    path('signin/', LoginAPI.as_view(), name='signin'),
-    path('logout/', knox_views.LogoutView.as_view(), name='logout'),
+    path('signup/', RegistrationView.as_view(), name='signup'),
+    path('signin/', LoginView.as_view(), name='signin'),
+    path('user', UserView.as_view()),
     path ('blog/', post_list, name='blog'),
     path ('comment-on-blog-post/', comment_on_post, name='comment-on-blog-post'),
     path ('book-consultation/', book_session_view , name='book-a-session'),

@@ -2,6 +2,9 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
 from phone_field import PhoneField
+import jwt
+from datetime import datetime, timedelta
+from django.contrib.auth.models import AbstractUser
 
 BUSINESS_TYPES = (
     ('CL', 'Clothing'),
@@ -11,6 +14,14 @@ BUSINESS_TYPES = (
     ('KI', 'Kitchen'),
     ('FH', 'Furniture & Housing'),
 )
+
+
+class User(AbstractUser):
+    username = models.CharField(max_length=255, unique= True)
+    email = models.CharField(max_length=255, unique= True)
+    password =  models.CharField(max_length=255)
+
+    REQUIRED_FIELDS = ['email']
 
 class Session(models.Model):
     full_name = models.CharField(max_length=50)
@@ -48,7 +59,7 @@ class APost(models.Model):
     content = models.TextField()
     like_count = models.IntegerField(default=0)
     comments = models.ManyToManyField(Comment, related_name = 'comments', blank=True)
-    users = models.ManyToManyField(User, related_name='likes',blank=True)
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='likes',blank=True)
         
     def __str__(self):
         return self.content

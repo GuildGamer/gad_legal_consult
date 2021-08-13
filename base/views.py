@@ -1,4 +1,5 @@
 from django import forms
+from django import http
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
@@ -6,6 +7,8 @@ import requests
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from requests.api import post
+from rest_framework import response
+from rest_framework.exceptions import AuthenticationFailed
 
 from base import serializers
 from .forms import SessionForm, PostForm
@@ -18,23 +21,121 @@ from base.models import *
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 # FOR API VIEWS
-from rest_framework import viewsets
-from base.serializers import BlogModelSerializer, SessionModelSerializer, UserSerializer, RegisterSerializer, CommentModelSerializer
+from rest_framework.views import APIView
+from base.serializers import (
+    BlogModelSerializer,
+    #LoginSerializer,  
+    SessionModelSerializer, 
+    #RegistrationSerializer, 
+    CommentModelSerializer,
+    UserSerializer
+)
+
 from base.models import Session, APost
 from rest_framework import status, generics, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from django.contrib.auth import login
-from knox.models import AuthToken
 from rest_framework.authtoken.serializers import AuthTokenSerializer
-from knox.views import LoginView as KnoxLoginView
 from rest_framework.authentication import authenticate
 
-
+from rest_framework import status
+from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.views import APIView
+import jwt, datetime
 
 #START API VIEWS
-#API VIEW FOR ALL POSTS
+
+# Register API
+class RegistrationView(APIView):
+    def post(self, request):
+        serializer = UserSerializer(data = request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        
+        data  = {
+            'success': True,
+            'reason':"",
+            'token ': ""
+        }
+
+        return Response(data) 
+
+class LoginView(APIView):
+    def post(self, request):
+        username = request.data['username']
+        password = request.data['password']
+
+        user = User.objects.filter(username=username).first()
+
+        if user is None:
+            data  = {
+                'success': False,
+                'reason':'User not found!',
+                'token ': ""
+            }
+
+            return Response(data)
+
+        if not user.check_password(password):
+            data  = {
+                'success': False,
+                'reason':'Incorrect Password!',
+                'token ': ""
+            }
+
+            return Response(data)
+
+        payload = {
+            'id': user.id,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+            'iat': datetime.datetime.utcnow()
+        }
+
+        token = jwt.encode(payload, 'secret', algorithm='HS256').decode('utf-8')
+
+        data  = {
+                'success': True,
+                'reason':'None',
+                'token ': token
+            }
+        login(request, user)
+        response = Response()
+
+        response.set_cookie(key='token', value=token, httponly=True)
+        response.data = data
+
+        return response
+
+class UserView(APIView):
+    def get(self, request):
+        token = request.COOKIES.get('token')
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try: 
+            payload = jwt.decode(token, 'secret', algorithm=['HS256'])
+
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        user = User.objects.filter(id=payload['id'].first())    
+        serializer = UserSerializer(user)
+
+        return Response(serializer.data)
+
+class LogoutView(APIView):
+    def post(self, request):
+        response = Response()
+        response.delete_cookie('jwt')
+        response.data = {
+            "success": True
+        }
+
+        return response
 
 # Blog API
 @api_view(['GET', 'POST'])
@@ -122,60 +223,8 @@ def comment_on_post(request):
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# Register API
-
-class RegisterAPI(generics.GenericAPIView):
-    serializer_class = RegisterSerializer
-
-    @method_decorator(csrf_exempt)
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        if user in User.objects.all():
-            return Response(
-                {
-                    #"user": UserSerializer(user, context=self.get_serializer_context()).data,
-                    "success": True,
-                    "reason": "",
-                    "token": AuthToken.objects.create(user)[1]
-                }
-            )
-        else: 
-             return Response(
-                {
-                    #"user": UserSerializer(user, context=self.get_serializer_context()).data,
-                    "success": False,
-                    "reason": serializer.errors,
-                    "token": AuthToken.objects.create(user)[1]
-                }
-            )
-
-class LoginAPI(KnoxLoginView):
-    permission_classes = (permissions.AllowAny,)
-
-    @method_decorator(csrf_exempt)
-    def post(self, request):
-        serializer = AuthTokenSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            user = serializer.validated_data['user']
-            authenticate(user)
-            login(request, user)
-            data = {
-                "success": True,
-                "reason": "",
-                "token":  AuthToken.objects.create(user)[1]
-            }
-            return Response(data)
-        else: 
-            data = {
-                "success": False,
-                "reason":  serializer.errors,
-                "token":  ""
-            }
-            return Response(data, status=status.HTTP_400_BAD_REQUEST)
-       
 # Session API
+
 @api_view(['POST'])
 def book_session_view(request):
     serializer = SessionModelSerializer(data=request.data)
