@@ -9,6 +9,7 @@ from .views import(
     post_list,
     RegistrationView,
     LoginView,
+    LogoutView,
     UserView,
     like_post,
     comment_on_post
@@ -20,6 +21,7 @@ urlpatterns = [
     path('signup/', RegistrationView.as_view(), name='signup'),
     path('signin/', LoginView.as_view(), name='signin'),
     path('user', UserView.as_view()),
+    path('singout/', LogoutView.as_view(), name="signout"),
     path ('blog/', post_list, name='blog'),
     path ('comment-on-blog-post/', comment_on_post, name='comment-on-blog-post'),
     path ('book-consultation/', book_session_view , name='book-a-session'),

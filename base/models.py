@@ -2,8 +2,6 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
 from phone_field import PhoneField
-import jwt
-from datetime import datetime, timedelta
 from django.contrib.auth.models import AbstractUser
 
 BUSINESS_TYPES = (
@@ -20,6 +18,7 @@ class User(AbstractUser):
     username = models.CharField(max_length=255, unique= True)
     email = models.CharField(max_length=255, unique= True)
     password =  models.CharField(max_length=255)
+    token = models.CharField(max_length=255)
 
     REQUIRED_FIELDS = ['email']
 

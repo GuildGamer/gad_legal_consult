@@ -29,6 +29,7 @@ import jwt, datetime
 
 # Register API
 class RegistrationView(APIView):
+    @method_decorator(csrf_exempt)
     def post(self, request):
         serializer = UserSerializer(data = request.data)
         serializer.is_valid(raise_exception=True)
@@ -43,6 +44,7 @@ class RegistrationView(APIView):
         return Response(data) 
 
 class LoginView(APIView):
+    @method_decorator(csrf_exempt)
     def post(self, request):
         username = request.data['username']
         password = request.data['password']
@@ -89,6 +91,7 @@ class LoginView(APIView):
         return response
 
 class UserView(APIView):
+    @method_decorator(csrf_exempt)
     def get(self, request):
         token = request.COOKIES.get('token')
 
@@ -107,6 +110,7 @@ class UserView(APIView):
         return Response(serializer.data)
 
 class LogoutView(APIView):
+    @method_decorator(csrf_exempt)
     def post(self, request):
         response = Response()
         response.delete_cookie('jwt')
