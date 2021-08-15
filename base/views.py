@@ -218,8 +218,6 @@ def book_session_view(request):
             "reason": "",
         }
 
-        exec('email.py')
-
         return Response(data, status=status.HTTP_201_CREATED)
 
     else:
