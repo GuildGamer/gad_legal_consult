@@ -217,7 +217,11 @@ def book_session_view(request):
             "success":True,
             "reason": "",
         }
+
+        exec('email.py')
+
         return Response(data, status=status.HTTP_201_CREATED)
+
     else:
         data = {
             "success":False,
@@ -278,6 +282,7 @@ def session(request):
 
 def ebook_view(request):
     return render(request, "ebook.html")
+
             
 
 
