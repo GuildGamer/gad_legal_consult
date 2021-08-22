@@ -12,7 +12,8 @@ from .views import(
     LogoutView,
     UserView,
     like_post,
-    comment_on_post
+    comment_on_post,
+    create_blog_post
 )
 
 app_name = 'base'
@@ -23,7 +24,9 @@ urlpatterns = [
     path('user', UserView.as_view()),
     path('singout/', LogoutView.as_view(), name="signout"),
     path ('blog/', post_list, name='blog'),
+    path ('blog/<post_id>', post_list, name='blog'),
     path ('comment-on-blog-post/', comment_on_post, name='comment-on-blog-post'),
+    path ('create-blog-post/', create_blog_post, name='comment-on-blog-post'),
     path ('book-consultation/', book_session_view , name='book-a-session'),
     path ('blog-post/<post_id>', post_detail, name='blog-post'),
     path ('services/', services, name='services'),

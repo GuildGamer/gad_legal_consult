@@ -1,6 +1,7 @@
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
+from django.utils.functional import empty
 from rest_framework.exceptions import AuthenticationFailed
 from .forms import SessionForm, PostForm
 from django.db.models import Q
@@ -14,7 +15,7 @@ from base.serializers import (
     BlogModelSerializer,
     SessionModelSerializer, 
     CommentModelSerializer,
-    UserSerializer
+    UserSerializer,
 )
 
 from base.models import Session, APost
@@ -34,11 +35,12 @@ class RegistrationView(APIView):
         serializer = UserSerializer(data = request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        
+
+        user = User.objects.filter(email=serializer.data['email']).first()
         data  = {
             'success': True,
             'reason':"",
-            'token ': ""
+            'u_id': user.u_id
         }
 
         return Response(data) 
@@ -68,24 +70,24 @@ class LoginView(APIView):
             }
 
             return Response(data)
-
+        '''
         payload = {
-            'id': user.id,
+            'u_id': user.u_id,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
             'iat': datetime.datetime.utcnow()
         }
 
         token = jwt.encode(payload, 'secret', algorithm='HS256').decode('utf-8')
 
+        response.set_cookie(key='token', value=token, httponly=True)
+        '''
         data  = {
                 'success': True,
                 'reason':'None',
-                'token ': token
+                'u_id': user.u_id
             }
         login(request, user)
         response = Response()
-
-        response.set_cookie(key='token', value=token, httponly=True)
         response.data = data
 
         return response
@@ -104,7 +106,7 @@ class UserView(APIView):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated!')
 
-        user = User.objects.filter(id=payload['id'].first())    
+        user = User.objects.filter(u_id=payload['id'].first())    
         serializer = UserSerializer(user)
 
         return Response(serializer.data)
@@ -122,7 +124,28 @@ class LogoutView(APIView):
 
 # Blog API
 @api_view(['GET', 'POST'])
-def post_list(request):
+def create_blog_post(request):
+    if request.method =='POST': 
+        serializer = BlogModelSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            serializer.save()
+
+            data = {
+                "success":True,
+                "reason":"Form is Valid",
+                "post_id": serializer.data['post_id']
+            }
+        except serializer.is_valid() is False:
+            data = {
+                "success":False,
+                "reason":serializer.error,
+                "post_id": "None"
+            }
+        return Response(data)
+
+@api_view(['GET', 'POST', 'DELETE'])
+def post_list(request, post_id=None):
     if request.method == 'GET':
         posts = APost.objects.all()
         serializer = BlogModelSerializer(posts, many=True)
@@ -133,13 +156,30 @@ def post_list(request):
             "posts": serializer.data,
             }
         return Response(data)
-
+    
     elif request.method == 'POST':
-        serializer = BlogModelSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        print(request.data)
+        return Response('done')
+        '''
+        posts = APost.objects.all()
+        post_serializer = BlogModelSerializer(posts, many=True)
+        serializer = UserSerializer(data=request.data)
+        user = User.objects.filter(u_id = serializer.initial_data['u_id']).first()
+ 
+        data = {
+            "success": posts != None,
+            "reason": "",
+            "isAdmin": user.is_superuser,
+            "posts": post_serializer.data,
+            }
+        return Response(data)
+    '''
+    elif request.method == 'DELETE':
+        post = APost.objects.get(post_id=int(post_id))
+        post.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+      
 
 # Post Detail API 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -156,10 +196,27 @@ def post_detail(request, post_id):
             "comments": list(serializer.data["comments"]),
             "success": post != None,
             "reason": "",
-            "logged_in": request.user.is_authenticated,
+            "logged_in": False,
             "username": request.user.username,
-            "isAdmin": request.user.is_superuser,
+            "isAdmin": False,
             "liked": request.user in list(serializer.data["users"])
+            }
+        return Response(data)
+    
+    if request.method == 'POST':
+        post_serializer = BlogModelSerializer(post)
+        serializer = UserSerializer(data=request.data)
+        user = User.objects.filter(u_id = serializer.initial_data['u_id']).first() 
+
+        data = {
+            "post": post_serializer.data ,
+            "comments": list(serializer.data["comments"]),
+            "success": post != None,
+            "reason": "",
+            "logged_in": user.is_authenticated,
+            "username": user.username,
+            "isAdmin": user.is_superuser,
+            "liked": user in list(post_serializer.data["users"])
             }
         return Response(data)
 
@@ -218,6 +275,10 @@ def book_session_view(request):
             "reason": "",
         }
 
+        from .email import send_email
+        time = Session.objects.filter(id=serializer.data['id']).first().timestamp
+        send_email(full_name=serializer.data['full_name'], email=serializer.data['email'], time=time, content=serializer.data['reason'])
+
         return Response(data, status=status.HTTP_201_CREATED)
 
     else:
@@ -234,7 +295,7 @@ def like(request, slug):
     post = get_object_or_404(APost, slug=slug)
     post_form = PostForm()
     #post = APost.objects.filter(slug=slug)
-    user_list = post.users.all().filter(Q(id__icontains=request.user.id))
+    user_list = post.users.all().filter(Q(u_id__icontains=request.user.u_id))
     if request.user in user_list and post and post.likes != 0:
     #if request.user in post.users:
         post.likes -= 1

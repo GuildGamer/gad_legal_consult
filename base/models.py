@@ -18,7 +18,9 @@ class User(AbstractUser):
     username = models.CharField(max_length=255, unique= True)
     email = models.CharField(max_length=255, unique= True)
     password =  models.CharField(max_length=255)
-    token = models.CharField(max_length=255)
+    token = models.CharField(max_length=255,)
+    u_id = models.AutoField(primary_key=True)
+
 
     REQUIRED_FIELDS = ['email']
 
@@ -26,7 +28,8 @@ class Session(models.Model):
     full_name = models.CharField(max_length=50)
     email = models.CharField(max_length=100)
     reason = models.CharField(max_length=256)
-    phone = PhoneField(blank=True, help_text='Contact phone number')
+    #phone = PhoneField(blank=True, help_text='Contact phone number')
+    timestamp = models.DateTimeField(auto_now_add=True)
     #business_type = models.CharField(choices=BUSINESS_TYPES, max_length=2)
     #user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 

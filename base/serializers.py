@@ -5,7 +5,7 @@ from .models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password', 'is_staff', 'is_active', 'date_joined']
+        fields = ['u_id', 'username', 'email', 'password', 'is_staff', 'is_active', 'date_joined']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -22,7 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
 class SessionModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Session
-        fields = ['id', 'full_name', 'email', 'phone', 'reason']
+        fields = ['id', 'full_name', 'email', 'reason']
 
 class BlogModelSerializer(serializers.ModelSerializer):
     class Meta:
@@ -33,3 +33,4 @@ class CommentModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['author', 'comment', 'timestamp']
+
