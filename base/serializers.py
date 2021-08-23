@@ -1,6 +1,6 @@
 from base.models import Session, APost, Comment
 from rest_framework import serializers
-from .models import User
+from .models import User, Validated
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -33,4 +33,8 @@ class CommentModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['author', 'comment', 'timestamp']
+class ValidatedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Validated
+        field = ['tx_ref', 'trans_id']
 

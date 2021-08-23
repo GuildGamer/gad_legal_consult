@@ -65,4 +65,10 @@ class APost(models.Model):
         
     def __str__(self):
         return self.content
+class Validated(models.Model):
+    tx_ref =  models.TextField()
+    trans_id = models.TextField()
+
+    def __str__(self):
+        return self.trans_id
 

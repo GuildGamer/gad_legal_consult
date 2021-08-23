@@ -7,6 +7,7 @@ from django.utils import tree
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
+EBOOK_DIR = os.path.join(BASE_DIR, 'ebook\GAD.pdf')
 
 
 # Quick-start development settings - unsuitable for production
@@ -176,12 +177,6 @@ PHONENUMBER_DEFAULT_REGION = 'NG'
 ACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = "optional"
 
-#flutterwave 
-FLW_PRODUCTION_PUBLIC_KEY = "your key"
-FLW_PRODUCTION_SECRET_KEY = "your key"
-FLW_SANDBOX_PUBLIC_KEY = "your key"
-FLW_SANDBOX_SECRET_KEY = "your key"
-FLW_SANDBOX = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 #STATIC_HOST = os.environ.get('DJANGO_STATIC_HOST', '')
@@ -194,3 +189,13 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 APPEND_SLASH=True
 
 AUTH_USER_MODEL = 'base.User'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'gadlegalconsult@gmail.com'
+EMAIL_HOST_PASSWORD = 'GadLegali$live!'
+
+#SEC_KEY = "FLWSECK-1ed9302820737f0454aea8aa138abe95-X"
+SEC_KEY = "FLWSECK_TEST-40fb9b28366dee0d081df359d333cce2-X"

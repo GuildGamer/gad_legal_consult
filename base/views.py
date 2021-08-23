@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from django.utils.functional import empty
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.serializers import Serializer
 from .forms import SessionForm, PostForm
 from django.db.models import Q
 #for REST FRAMEWORK
@@ -16,6 +17,7 @@ from base.serializers import (
     SessionModelSerializer, 
     CommentModelSerializer,
     UserSerializer,
+    ValidatedSerializer
 )
 
 from base.models import Session, APost
@@ -24,7 +26,10 @@ from rest_framework.response import Response
 from django.contrib.auth import login
 from rest_framework import status
 from rest_framework.views import APIView
-import jwt, datetime
+import jwt
+import requests
+from django.conf import settings
+from .email import send_email
 
 #START API VIEWS
 
@@ -275,9 +280,14 @@ def book_session_view(request):
             "reason": "",
         }
 
-        from .email import send_email
         time = Session.objects.filter(id=serializer.data['id']).first().timestamp
-        send_email(full_name=serializer.data['full_name'], email=serializer.data['email'], time=time, content=serializer.data['reason'])
+        full_name=serializer.data['full_name'], 
+        email=serializer.data['email'], 
+        time=time, 
+        content=serializer.data['reason']
+        subject = 'A session has been booked'
+        message = f"{full_name} has booked a session at {time} with the following content: *{content}*. Please do well do get back to them at {email}, Thank you. "
+        send_email(subject=subject, message=message, recipient_list = ['victormomodu25@gmail.com',], send_ebook=False)
 
         return Response(data, status=status.HTTP_201_CREATED)
 
@@ -339,8 +349,27 @@ def session(request):
 
     return render(request, "session.html", context)
 
-def ebook_view(request):
-    return render(request, "ebook.html")
+@api_view(['POST'])
+def validate_payment(request):
+    serializer = ValidatedSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    trans_id = serializer.data['trans_id']
+    
+    url = f"https://api.flutterwave.com/v3/transactions/{trans_id}/verify"
+    auth_value = f"Bearer {settings.SEC_KEY}"
+
+    data = {
+    'Content-Type': 'application/json', 
+    'Authorization': auth_value
+    }
+    response = requests.get(url, data=data)
+
+    if response.text['status'] == 'success':
+        send_email(recipient_list = response.test['customer']['email'], send_ebook=True)
+
+    
+
+    
 
             
 
