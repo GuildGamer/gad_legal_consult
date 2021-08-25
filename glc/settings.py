@@ -17,7 +17,7 @@ EBOOK_DIR = os.path.join(BASE_DIR, 'ebook\GAD.pdf')
 SECRET_KEY = 'django-insecure-o4+q0%wq^!r)1sq(+1947+!-h2g@b-a3mp-=dxmj+x*vcve+r)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['192.168.43.251', '127.0.0.1','kubernetes.docker.internal', 'hp', 'secure-spire-44407.herokuapp.com']
 
@@ -197,5 +197,5 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'gadlegalconsult@gmail.com'
 EMAIL_HOST_PASSWORD = 'GadLegali$live!'
 
-#SEC_KEY = "FLWSECK-1ed9302820737f0454aea8aa138abe95-X"
-SEC_KEY = "FLWSECK_TEST-40fb9b28366dee0d081df359d333cce2-X"
+SEC_KEY = "FLWSECK-1ed9302820737f0454aea8aa138abe95-X"
+#SEC_KEY = "FLWSECK_TEST-40fb9b28366dee0d081df359d333cce2-X"

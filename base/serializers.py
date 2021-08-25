@@ -36,5 +36,5 @@ class CommentModelSerializer(serializers.ModelSerializer):
 class ValidatedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Validated
-        field = ['tx_ref', 'trans_id']
+        fields = ['tx_ref', 'trans_id']
 

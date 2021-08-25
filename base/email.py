@@ -8,7 +8,7 @@ import smtplib
 import mimetypes
 import email
 import email.mime.application
-def send_email(subject, message, recipient_list, send_ebook):
+def send_email( recipient_list, send_ebook, subject=None, message=None):
     email_from = settings.EMAIL_HOST_USER
     email_pass = settings.EMAIL_HOST_PASSWORD
 

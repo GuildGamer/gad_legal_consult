@@ -1,3 +1,4 @@
+from glc.settings import SEC_KEY
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
@@ -351,22 +352,35 @@ def session(request):
 
 @api_view(['POST'])
 def validate_payment(request):
+    print('REQUEST IS REACHING HERE!')
     serializer = ValidatedSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     trans_id = serializer.data['trans_id']
     
     url = f"https://api.flutterwave.com/v3/transactions/{trans_id}/verify"
-    auth_value = f"Bearer {settings.SEC_KEY}"
+    auth_value = f"Bearer {SEC_KEY}"
 
-    data = {
-    'Content-Type': 'application/json', 
-    'Authorization': auth_value
-    }
-    response = requests.get(url, data=data)
+    response = requests.get(url, headers={'Authorization': auth_value, 'Content-Type': 'application/json'})
+    print(response.json()['status'])
+    print(response.json())
+    if response.json()['status'] == 'success':
+        customer = response.json()['data']['customer']
+        send_email(recipient_list = customer['email'], send_ebook=True)
+        serializer.save()
 
-    if response.text['status'] == 'success':
-        send_email(recipient_list = response.test['customer']['email'], send_ebook=True)
+        data = {
+            "success":"True",
+            "reason":response.json()['message']
+        }
 
+        return Response(data, status=status.HTTP_201_CREATED)
+    else:
+        data = {
+            "success":"False",
+            "reason":response.json()['message']
+        }
+
+        return Response(data, status=status.HTTP_400_BAD_REQUEST)
     
 
     
