@@ -352,7 +352,7 @@ def session(request):
 
 @api_view(['POST'])
 def validate_payment(request):
-    print('REQUEST IS REACHING HERE!')
+    #print('REQUEST IS REACHING HERE!')
     serializer = ValidatedSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     trans_id = serializer.data['trans_id']
@@ -361,8 +361,6 @@ def validate_payment(request):
     auth_value = f"Bearer {SEC_KEY}"
 
     response = requests.get(url, headers={'Authorization': auth_value, 'Content-Type': 'application/json'})
-    print(response.json()['status'])
-    print(response.json())
     if response.json()['status'] == 'success':
         customer = response.json()['data']['customer']
         send_email(recipient_list = customer['email'], send_ebook=True)
