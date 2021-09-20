@@ -13,13 +13,15 @@ from .views import(
     like_post,
     comment_on_post,
     create_blog_post,
-    validate_payment
+    validate_payment,
+    test_view
 )
 
 app_name = 'base'
 
 urlpatterns = [
     path('signup/', RegistrationView.as_view(), name='signup'),
+    path('test/', test_view, name='test'),
     path('signin/', LoginView.as_view(), name='signin'),
     path('user', UserView.as_view()),
     path('singout/', LogoutView.as_view(), name="signout"),

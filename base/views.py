@@ -31,6 +31,19 @@ import jwt
 import requests
 from django.conf import settings
 from .email import send_email
+import json
+
+@api_view(['GET','POST'])
+def test_view(request):
+    if request.method == 'POST':
+        data = {
+            'method':'post',
+            'value':request.data
+        }
+        return Response(data)
+
+    elif request.method == 'GET':
+        return Response({'method':'get'})
 
 #START API VIEWS
 

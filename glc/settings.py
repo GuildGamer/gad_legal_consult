@@ -19,7 +19,7 @@ SECRET_KEY = 'django-insecure-o4+q0%wq^!r)1sq(+1947+!-h2g@b-a3mp-=dxmj+x*vcve+r)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['192.168.43.251', '127.0.0.1','kubernetes.docker.internal', 'hp', 'secure-spire-44407.herokuapp.com']
+ALLOWED_HOSTS = ['192.168.43.251', '127.0.0.1','kubernetes.docker.internal', 'hp', 'secure-spire-44407.herokuapp.com', '0.0.0.0']
 
 
 # Application definition
