@@ -1,4 +1,5 @@
-from glc.settings import SEC_KEY
+from decimal import DivisionUndefined
+from glc.settings import SEC_KEY, ADMIN_USERNAME
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
@@ -110,7 +111,7 @@ class LoginView(APIView):
         response.data = data
 
         return response
-
+'''
 class UserView(APIView):
     @method_decorator(csrf_exempt)
     def get(self, request):
@@ -129,6 +130,7 @@ class UserView(APIView):
         serializer = UserSerializer(user)
 
         return Response(serializer.data)
+'''
 
 class LogoutView(APIView):
     @method_decorator(csrf_exempt)
@@ -138,6 +140,52 @@ class LogoutView(APIView):
         response.data = {
             "success": True
         }
+
+        return response
+
+#admin-login view
+
+class AdminLoginView(APIView):
+    @method_decorator(csrf_exempt)
+    def post(self, request):
+        username = request.data['username']
+        password = request.data['password']
+
+        user = User.objects.filter(username=username).first()
+
+        if user is None:
+            data  = {
+                'success': False,
+                'reason':'User not found!',
+                'token ': ""
+            }
+
+            return Response(data)
+            
+        if not user.check_password(password):
+            data  = {
+                'success': False,
+                'reason':'Incorrect Password!',
+                'token ': ""
+            }
+
+            return Response(data)
+        if user.is_superuser and user.username == ADMIN_USERNAME:
+            data  = {
+                    'success': True,
+                    'reason':'None',
+                    'u_id': user.u_id
+                }
+            login(request, user)
+        else:
+            data  = {
+                'success': False,
+                'reason':'Not admin user',
+
+            }
+
+        response = Response()
+        response.data = data
 
         return response
 
@@ -177,9 +225,11 @@ def post_list(request, post_id=None):
         return Response(data)
     
     elif request.method == 'POST':
+        '''
         print(request.data)
         return Response('done')
         '''
+
         posts = APost.objects.all()
         post_serializer = BlogModelSerializer(posts, many=True)
         serializer = UserSerializer(data=request.data)
@@ -190,9 +240,10 @@ def post_list(request, post_id=None):
             "reason": "",
             "isAdmin": user.is_superuser,
             "posts": post_serializer.data,
+            "user":user.username
             }
         return Response(data)
-    '''
+
     elif request.method == 'DELETE':
         post = APost.objects.get(post_id=int(post_id))
         post.delete()
@@ -201,8 +252,8 @@ def post_list(request, post_id=None):
       
 
 # Post Detail API 
-@api_view(['GET', 'PUT', 'DELETE'])
-def post_detail(request, post_id):
+@api_view(['GET', 'PUT', 'DELETE', 'POST'])
+def post_detail(request, post_id):        
     try:
         post = APost.objects.get(post_id=int(post_id))
     except APost.DoesNotExist:
@@ -210,9 +261,18 @@ def post_detail(request, post_id):
 
     if request.method == 'GET':
         serializer = BlogModelSerializer(post)
+        comment_qs = Comment.objects.filter(post_id=post_id)
+        c_list = []
+        for c in comment_qs: 
+            c_list.append({"content":str(c.comment),
+                            "comment_id":str(c.comment_id),
+                            "date_created":str(c.timestamp),
+                            "username":str(c.author.username),
+                            "post_id":str(c.post_id)
+                            })
         data = {
             "post": serializer.data ,
-            "comments": list(serializer.data["comments"]),
+            "comments": c_list,
             "success": post != None,
             "reason": "",
             "logged_in": False,
@@ -229,7 +289,7 @@ def post_detail(request, post_id):
 
         data = {
             "post": post_serializer.data ,
-            "comments": list(serializer.data["comments"]),
+            "comments": list(post_serializer.data["comments"]),
             "success": post != None,
             "reason": "",
             "logged_in": user.is_authenticated,
@@ -250,29 +310,44 @@ def post_detail(request, post_id):
         post.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+@api_view(['GET'])
+def delete_post(request, post_id):
+    try:
+        post = APost.objects.get(post_id=int(post_id))
+    except APost.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    post.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
 @api_view(['POST'])
 def like_post(request):
-    serializer = CommentModelSerializer(data=request.data)
-    post = APost.objects.filter(post_id = int(serializer.data['post_id']))[0]
+    u_serializer = UserSerializer(data=request.data)
+    serializer = BlogModelSerializer(data=request.data)
+    post = APost.objects.filter(post_id = int(serializer.initial_data['post_id'])).first()
+    user = User.objects.filter(u_id =  u_serializer.initial_data['u_id']).first()
     user_list = post.users.all()
-    if request.user in user_list and post and post.likes != 0:
+    if user in user_list and post.like_count != 0:
     #if request.user in post.users:
-        post.likes -= 1
-        post.users.remove(request.user)
+        post.like_count -= 1
+        post.users.remove(user)
         post.save()
+
+        return Response({"success":True, "reason":""})
     else: 
-        post.likes += 1
-        post.users.add(request.user)
+        post.like_count += 1
+        post.users.add(user)
         post.save()
+
+        return Response({"success":True, "reason":""})
 
 @api_view(['POST'])    
 def comment_on_post(request):
+    u_serializer = UserSerializer(data=request.data)
     serializer = CommentModelSerializer(data=request.data)
-    post = APost.objects.filter(post_id = int(serializer.data['post_id']))[0]
+    serializer.initial_data['author'] = u_serializer.initial_data['u_id']
     if serializer.is_valid():
-        serializer.author = request.user
         serializer.save()
-        post.comments.add(serializer.data['comment'])
         data = {
             "comment": serializer.data['comment'],
             "reason": "",
@@ -280,6 +355,7 @@ def comment_on_post(request):
         }
         return Response(data, status=status.HTTP_201_CREATED)
     else:
+        print(f"error:{serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Session API

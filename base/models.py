@@ -46,8 +46,10 @@ class Buyer(models.Model):
 
 class Comment(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    comment = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+    comment = models.CharField(max_length=225)
+    timestamp = models.DateField(auto_now_add=True)
+    post_id = models.CharField(max_length=255)
+    comment_id = models.AutoField(primary_key=True)
 
     def __str__(self):
         return self.comment
@@ -71,4 +73,5 @@ class Validated(models.Model):
 
     def __str__(self):
         return self.trans_id
+
 

@@ -32,7 +32,7 @@ class BlogModelSerializer(serializers.ModelSerializer):
 class CommentModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ['author', 'comment', 'timestamp']
+        fields = ['author', 'comment', 'timestamp', 'post_id']
 class ValidatedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Validated

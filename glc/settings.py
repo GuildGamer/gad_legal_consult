@@ -9,6 +9,8 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 EBOOK_DIR = os.path.join(BASE_DIR, 'ebook\GAD.pdf')
 
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -209,6 +211,8 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'gadlegalconsult@gmail.com'
 EMAIL_HOST_PASSWORD = 'gadlegali$Live!'
+
+ADMIN_USERNAME = "victor"
 
 SEC_KEY = "FLWSECK-1ed9302820737f0454aea8aa138abe95-X"
 #SEC_KEY = "FLWSECK_TEST-40fb9b28366dee0d081df359d333cce2-X"
