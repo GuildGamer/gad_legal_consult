@@ -4,7 +4,6 @@ from .views import(
     post_detail,
     session,
     services,
-    like,
     book_session_view,
     post_list,
     RegistrationView,
@@ -16,7 +15,8 @@ from .views import(
     validate_payment,
     test_view,
     delete_post,
-    AdminLoginView
+    AdminLoginView,
+    validate_admin
 )
 
 app_name = 'base'
@@ -26,6 +26,7 @@ urlpatterns = [
     path('test/', test_view, name='test'),
     path('admin-login/', AdminLoginView.as_view(), name='admin-login'),
     path('signin/', LoginView.as_view(), name='signin'),
+    path('validate-admin', validate_admin, name='validate-admin'),
     #path('user', UserView.as_view()),
     path('singout/', LogoutView.as_view(), name="signout"),
     path ('blog/', post_list, name='blog'),
@@ -39,6 +40,5 @@ urlpatterns = [
     path ('blog-post/<post_id>', post_detail, name='blog-post'),
     path ('services/', services, name='services'),
     path ('book-a-session/', session, name='session'),
-    path ('blog/like-post/<slug>/', like, name='like'),
 ]
 

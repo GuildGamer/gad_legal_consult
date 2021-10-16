@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from django.utils.functional import empty
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed, bad_request
 from rest_framework.serializers import Serializer
 from .forms import SessionForm, PostForm
 from django.db.models import Q
@@ -22,13 +22,13 @@ from base.serializers import (
     ValidatedSerializer
 )
 
+from django.contrib.auth.decorators import login_required
 from base.models import Session, APost
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import login
 from rest_framework import status
 from rest_framework.views import APIView
-import jwt
 import requests
 from django.conf import settings
 from .email import send_email
@@ -190,26 +190,44 @@ class AdminLoginView(APIView):
         return response
 
 # Blog API
+@csrf_exempt
 @api_view(['GET', 'POST'])
-def create_blog_post(request):
-    if request.method =='POST': 
-        serializer = BlogModelSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        try:
-            serializer.save()
+def validate_admin(request):
+    admin = User.objects.filter(username = ADMIN_USERNAME).first()
+    if admin.is_authenticated:
+        return Response({"success":True})
+    else:
+        return Response({"success":False})
 
-            data = {
-                "success":True,
-                "reason":"Form is Valid",
-                "post_id": serializer.data['post_id']
-            }
-        except serializer.is_valid() is False:
-            data = {
-                "success":False,
-                "reason":serializer.error,
-                "post_id": "None"
-            }
-        return Response(data)
+@api_view(['GET', 'POST']) 
+def create_blog_post(request):
+    try:
+        if request.method =='POST': 
+                admin = User.objects.filter(username = ADMIN_USERNAME).first()
+                serializer = BlogModelSerializer(data=request.data)
+                serializer.initial_data['author'] = admin.u_id
+                serializer.is_valid(raise_exception=True)
+
+                try:
+                    serializer.save()
+
+                    data = {
+                        "success":True,
+                        "reason":"Form is Valid",
+                        "post_id": serializer.data['post_id']
+                    }
+                except serializer.is_valid() is False:
+                    data = {
+                        "success":False,
+                        "reason":serializer.error,
+                        "post_id": "None"
+                    }
+                return Response(data)
+    except bad_request:
+        print(bad_request)
+
+        
+            
 
 @api_view(['GET', 'POST', 'DELETE'])
 def post_list(request, post_id=None):
@@ -287,9 +305,19 @@ def post_detail(request, post_id):
         serializer = UserSerializer(data=request.data)
         user = User.objects.filter(u_id = serializer.initial_data['u_id']).first() 
 
+        comment_qs = Comment.objects.filter(post_id=post_id)
+        c_list = []
+        for c in comment_qs: 
+            c_list.append({"content":str(c.comment),
+                            "comment_id":str(c.comment_id),
+                            "date_created":str(c.timestamp),
+                            "username":str(c.author.username),
+                            "post_id":str(c.post_id)
+                            })
+
         data = {
             "post": post_serializer.data ,
-            "comments": list(post_serializer.data["comments"]),
+            "comments": c_list,
             "success": post != None,
             "reason": "",
             "logged_in": user.is_authenticated,
@@ -311,14 +339,18 @@ def post_detail(request, post_id):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@api_view(['GET'])
+@api_view(['GET','POST'])
 def delete_post(request, post_id):
     try:
         post = APost.objects.get(post_id=int(post_id))
     except APost.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     post.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)
+    data = {
+        "success":True,
+        "reason":"post has been deleted"
+        }
+    return Response(data, status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['POST'])
 def like_post(request):
